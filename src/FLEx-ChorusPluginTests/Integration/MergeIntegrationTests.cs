@@ -9,7 +9,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Chorus.merge.xml.generic;
 using Chorus.Properties;
-using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using LibChorus.TestUtilities;
 using NUnit.Framework;
 

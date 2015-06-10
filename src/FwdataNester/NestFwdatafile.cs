@@ -20,10 +20,12 @@ using Chorus.merge;
 using Chorus.merge.xml.generic;
 using Chorus.merge.xml.generic.xmldiff;
 using FLEx_ChorusPlugin.Infrastructure;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using Palaso.Progress;
 using Palaso.Xml;
 using TriboroughBridge_ChorusPlugin;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.DomainServices;
 
 namespace FwdataTestApp
 {
@@ -35,7 +37,7 @@ namespace FwdataTestApp
 
 		public NestFwdataFile()
 		{
-			if (Utilities.IsUnix)
+			if (TriboroughBridge_ChorusPlugin.Utilities.IsUnix)
 			{
 				CurrentBaseFolder = Path.Combine(Environment.GetEnvironmentVariable(@"HOME"), @"TestProjects");
 			}
@@ -215,7 +217,9 @@ namespace FwdataTestApp
 
 			danglingRefsTimer.Start();
 			var danglingRefGuids = new Dictionary<string, HashSet<string>>();
-			foreach (var kvp in classData.Values.SelectMany(innerDict => innerDict).ToDictionary(innerKvp => innerKvp.Key, innerKvp => Utilities.CreateFromBytes(innerKvp.Value)))
+			foreach (var kvp in classData.Values.SelectMany(innerDict => innerDict)
+				.ToDictionary(innerKvp => innerKvp.Key,
+					innerKvp => TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(innerKvp.Value)))
 			{
 				var haveWrittenMainObjInfo = false;
 				var currentMainGuid = kvp.Key;
@@ -307,7 +311,7 @@ namespace FwdataTestApp
 			// 1. Set 'Checksum' to zero (0).
 			if (className == "WfiWordform")
 			{
-				var wfElement = Utilities.CreateFromBytes(record);
+				var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(record);
 				var csElement = wfElement.Element("Checksum");
 				if (csElement != null)
 				{
@@ -665,7 +669,7 @@ namespace FwdataTestApp
 						origData.Remove(srcGuid);
 						if (attrValues[SharedConstants.Class] == "WfiWordform")
 						{
-							var wfElement = Utilities.CreateFromBytes(origRecAsBytes);
+							var wfElement = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(origRecAsBytes);
 							var csProp = wfElement.Element("Checksum");
 							if (csProp != null)
 							{
@@ -769,7 +773,7 @@ namespace FwdataTestApp
 				var unownedElementDict = unownedElementKvp.Value;
 				foreach (var unownedElement in unownedElementDict.Values)
 				{
-					var element = Utilities.CreateFromBytes(unownedElement);
+					var element = TriboroughBridge_ChorusPlugin.Utilities.CreateFromBytes(unownedElement);
 					classElement.Add(element);
 					CmObjectNestingService.NestObject(false, element,
 												  classData,
@@ -840,7 +844,8 @@ namespace FwdataTestApp
 							 .Where(projectDirName => Path.GetFileNameWithoutExtension(projectDirName).ToLowerInvariant() != "zpi");
 				foreach (var projectDirName in allProjectDirNamesExceptMine)
 				{
-					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" + Utilities.FwXmlExtension).FirstOrDefault());
+					RestoreProjectIfNeeded(Directory.GetFiles(projectDirName, "*" +
+						SharedConstants.FwXmlExtension).FirstOrDefault());
 				}
 			}
 			finally
@@ -855,10 +860,14 @@ namespace FwdataTestApp
 				return;
 			var currentFilename = Path.GetFileName(currentFwdataPathname);
 			var projectDirName = Path.GetDirectoryName(currentFwdataPathname);
-			if (currentFilename.ToLowerInvariant() == "zpi" + Utilities.FwXmlExtension || projectDirName.ToLowerInvariant() == "zpi")
+			if (currentFilename.ToLowerInvariant() == "zpi" + SharedConstants.FwXmlExtension ||
+				projectDirName.ToLowerInvariant() == "zpi")
+			{
 				return; // Don't even think of wiping out my ZPI folder.
+			}
 
-			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + Utilities.FwXmlExtension, SearchOption.TopDirectoryOnly);
+			var backupDataFilesFullPathnames = Directory.GetFiles(CurrentBaseFolder, "*" + SharedConstants.FwXmlExtension,
+				SearchOption.TopDirectoryOnly);
 			var backupDataFilenames = backupDataFilesFullPathnames.Select(Path.GetFileName).ToList();
 			if (!backupDataFilenames.Contains(currentFilename))
 				return;

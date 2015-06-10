@@ -6,7 +6,7 @@
 
 using System;
 using System.IO;
-using FLEx_ChorusPlugin.Infrastructure;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Infrastructure.ActionHandlers;
 using LibChorus.TestUtilities;
 using NUnit.Framework;

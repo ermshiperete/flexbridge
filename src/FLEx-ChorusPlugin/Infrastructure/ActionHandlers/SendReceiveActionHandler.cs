@@ -9,7 +9,8 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Forms;
 using Chorus.UI.Sync;
-using FLEx_ChorusPlugin.Infrastructure.DomainServices;
+using LibFLExBridgeChorusPlugin;
+using LibFLExBridgeChorusPlugin.Infrastructure;
 using FLEx_ChorusPlugin.Properties;
 using TriboroughBridge_ChorusPlugin;
 using TriboroughBridge_ChorusPlugin.Infrastructure;
@@ -36,7 +37,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 		{
 			// -p <$fwroot>\foo\foo.fwdata
 			var projectDir = Path.GetDirectoryName(commandLineArgs["-p"]);
-			using (var chorusSystem = Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
+			using (var chorusSystem = TriboroughBridge_ChorusPlugin.Utilities.InitializeChorusSystem(projectDir, commandLineArgs["-u"], FlexFolderSystem.ConfigureChorusProjectFolder))
 			{
 				var newlyCreated = false;
 				if (chorusSystem.Repository.Identifier == null)
@@ -56,7 +57,7 @@ namespace FLEx_ChorusPlugin.Infrastructure.ActionHandlers
 				try
 				{
 					File.WriteAllText(lockPathname, "");
-					var origPathname = Path.Combine(projectDir, projectName + Utilities.FwXmlExtension);
+					var origPathname = Path.Combine(projectDir, projectName + SharedConstants.FwXmlExtension);
 
 					// Do the Chorus business.
 					using (var syncDlg = (SyncDialog)chorusSystem.WinForms.CreateSynchronizationDialog(SyncUIDialogBehaviors.Lazy, SyncUIFeatures.NormalRecommended | SyncUIFeatures.PlaySoundIfSuccessful))
