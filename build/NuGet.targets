@@ -49,7 +49,7 @@
 
 	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites" Condition="$(RestorePackages)">
 		<!-- Download NuGet packages specified in the packages.config file of each project -->
-		<Exec Command='$(NuGetCommand) restore "$(SolutionPath)"'/>
+		<Exec Command='$(NuGetCommand) restore -recursive "$(SolutionPath)"'/>
 	</Target>
 
 	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
